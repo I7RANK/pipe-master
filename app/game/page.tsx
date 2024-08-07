@@ -1,8 +1,8 @@
 'use client';
 
 import GameHeader from '@/components/GameHeader';
+import Sprite from '@/components/Sprite';
 import { ReactElement } from 'react';
-import { PIPE_SPRITES } from '@/constants/pipe-pieces';
 
 export default function Page() {
   const height = 5;
@@ -14,11 +14,7 @@ export default function Page() {
     for (let indexX = 0; indexX < width; indexX++) {
       row.push(
         <div key={indexY + indexX} className="bg-red-600 w-full relative">
-          <img
-            src={PIPE_SPRITES.unPainted.rect}
-            alt=""
-            className="w-[calc(100%+4px)] h-[calc(100%+4px)] -mt-0.5 hover:rotate-90 transition-transform"
-          />
+          <Sprite spriteName={'doubleCurve'} isPainted />
         </div>
       );
     }
