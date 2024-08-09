@@ -16,9 +16,12 @@ export default function Sprite({ spriteName, isPainted }: SpriteProps) {
   const [currentRotation, setCurrentRotation] = useState(0);
   const getPositionIndex = useRef<Function>(() => {});
   useEffect(() => {
-    getPositionIndex.current = createCircularIterator(sprite.stepsQuantity);
+    const initialIndex = setRandomPosition(sprite.stepsQuantity);
+    getPositionIndex.current = createCircularIterator(
+      sprite.stepsQuantity,
+      initialIndex
+    );
     getPositionIndex.current();
-    setRandomPosition();
   }, []);
   const rotate90DegPiece = () => {
     const position = getPositionIndex.current();
@@ -28,13 +31,14 @@ export default function Sprite({ spriteName, isPainted }: SpriteProps) {
     setCurrentRotation(rotateTo);
     console.log(position, buttonRef.current.style.transform);
   };
-  const setRandomPosition = () => {
+  const setRandomPosition = (maxPositions: number) => {
     if (!buttonRef.current) return;
-    const randomNumber = Math.floor(Math.random() * 4);
+    const randomNumber = Math.floor(Math.random() * maxPositions);
     const rotation = randomNumber * 90;
     buttonRef.current.style.transform = `rotate(${rotation}deg)`;
     buttonRef.current.classList.add('fade-in');
     setCurrentRotation(rotation);
+    return randomNumber;
   };
 
   return (
