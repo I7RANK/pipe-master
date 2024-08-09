@@ -18,3 +18,10 @@ export type PipeSprites = {
 };
 
 export type SpritesName = keyof Sprites;
+
+type LevelPiece = {
+  name: SpritesName | '';
+  positionToWin: number | null;
+};
+
+export type Level = LevelPiece[][];

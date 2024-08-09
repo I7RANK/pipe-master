@@ -7,9 +7,14 @@ import '@/styles/sprite.css';
 type SpriteProps = {
   readonly spriteName: SpritesName;
   readonly isPainted: boolean;
+  readonly onPositionChange: Function;
 };
 
-export default function Sprite({ spriteName, isPainted }: SpriteProps) {
+export default function Sprite({
+  spriteName,
+  isPainted,
+  onPositionChange,
+}: SpriteProps) {
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const { painted, unPainted } = PIPE_SPRITES;
   const sprite = isPainted ? painted[spriteName] : unPainted[spriteName];
@@ -28,6 +33,7 @@ export default function Sprite({ spriteName, isPainted }: SpriteProps) {
     const rotateTo = currentRotation + 90;
     if (!buttonRef.current) return;
     buttonRef.current.style.transform = `rotate(${rotateTo}deg)`;
+    onPositionChange(position);
     setCurrentRotation(rotateTo);
     console.log(position, buttonRef.current.style.transform);
   };
@@ -38,6 +44,7 @@ export default function Sprite({ spriteName, isPainted }: SpriteProps) {
     buttonRef.current.style.transform = `rotate(${rotation}deg)`;
     buttonRef.current.classList.add('fade-in');
     setCurrentRotation(rotation);
+    onPositionChange(randomNumber);
     return randomNumber;
   };
 

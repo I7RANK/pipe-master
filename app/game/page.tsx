@@ -2,31 +2,59 @@
 
 import GameHeader from '@/components/GameHeader';
 import Sprite from '@/components/Sprite';
-import { ReactElement } from 'react';
-import { SpritesName } from '@/types/sprites';
+import { ReactElement, useRef } from 'react';
+import { SpritesName, Level } from '@/types/sprites';
+import { DEFAULT_LEVEL } from '@/constants/levels';
 
 export default function Page() {
-  const height = 5;
-  const width = 5;
+  const tableSize = 5;
   const table: ReactElement<any, any>[] = [];
+  const userGame = useRef(
+    Array(tableSize)
+      .fill(null)
+      .map(() => Array(tableSize).fill(null))
+  );
 
-  const pieces: (SpritesName | '')[][] = [
-    ['curve', 'curve', '', '', ''],
-    ['rect', 'curve', 'curve', '', ''],
-    ['rect', '', 'rect', '', ''],
-    ['start', '', 'end', '', ''],
-    ['', '', '', '', ''],
-  ];
+  const level: Level = DEFAULT_LEVEL;
 
-  for (let indexY = 0; indexY < height; indexY++) {
+  const setUserGamePositions = (value: number, x: number, y: number) => {
+    userGame.current[x][y] = value;
+    console.log(userGame.current);
+    const userWon = checkIfUserWon();
+    if (userWon) {
+      console.log(
+        '%cUser Won!',
+        'color: #32c825; font-family: sans-serif; text-decoration: underline; font-size: 32px;'
+      );
+    }
+  };
+
+  const checkIfUserWon = () => {
+    let stopChecking = false;
+    userGame.current.forEach((row, y) => {
+      if (stopChecking) return;
+
+      row.forEach((piecePosition, x) => {
+        if (level[y][x].positionToWin !== piecePosition) {
+          stopChecking = true;
+        }
+      });
+    });
+    return !stopChecking;
+  };
+
+  for (let indexY = 0; indexY < tableSize; indexY++) {
     const row: ReactElement<any, any>[] = [];
-    for (let indexX = 0; indexX < width; indexX++) {
+    for (let indexX = 0; indexX < tableSize; indexX++) {
       row.push(
         <div key={indexY + indexX} className="bg-[#333649] w-full relative">
-          {pieces[indexY][indexX] !== '' && (
+          {level[indexY][indexX].name !== '' && (
             <Sprite
-              spriteName={pieces[indexY][indexX] as SpritesName}
+              spriteName={level[indexY][indexX].name as SpritesName}
               isPainted
+              onPositionChange={(value: number) => {
+                setUserGamePositions(value, indexY, indexX);
+              }}
             />
           )}
         </div>
