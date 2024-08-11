@@ -21,7 +21,7 @@ export type SpritesName = keyof Sprites;
 
 type LevelPiece = {
   name: SpritesName | '';
-  positionToWin: number | null;
+  position: number | null;
 };
 
 export type Level = LevelPiece[][];

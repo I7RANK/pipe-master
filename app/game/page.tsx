@@ -9,16 +9,12 @@ import { DEFAULT_LEVEL } from '@/constants/levels';
 export default function Page() {
   const tableSize = 5;
   const table: ReactElement<any, any>[] = [];
-  const userGame = useRef(
-    Array(tableSize)
-      .fill(null)
-      .map(() => Array(tableSize).fill(null))
-  );
 
   const level: Level = DEFAULT_LEVEL;
+  const userGame = useRef<Level>(JSON.parse(JSON.stringify(level)));
 
   const setUserGamePositions = (value: number, x: number, y: number) => {
-    userGame.current[x][y] = value;
+    userGame.current[x][y].position = value;
     console.log(userGame.current);
     const userWon = checkIfUserWon();
     if (userWon) {
@@ -34,8 +30,8 @@ export default function Page() {
     userGame.current.forEach((row, y) => {
       if (stopChecking) return;
 
-      row.forEach((piecePosition, x) => {
-        if (level[y][x].positionToWin !== piecePosition) {
+      row.forEach((piece, x) => {
+        if (level[y][x].position !== piece.position) {
           stopChecking = true;
         }
       });
