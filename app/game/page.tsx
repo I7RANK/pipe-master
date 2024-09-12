@@ -1,15 +1,14 @@
 'use client';
 
 import GameHeader from '@/components/GameHeader';
-import Sprite from '@/components/Sprite';
-import { ReactElement, useRef, useState } from 'react';
-import { SpritesName, Level } from '@/types/sprites';
+import GameTable from '@/components/GameTable';
+import { useRef, useState } from 'react';
+import { Level } from '@/types/sprites';
 import { DEFAULT_LEVEL } from '@/constants/levels';
 import { getSpriteByName } from '@/utils/get-sprite';
 
 export default function Page() {
   const tableSize = 5;
-  const table: ReactElement<any, any>[] = [];
   const level: Level = DEFAULT_LEVEL;
   const [hasChanged, setHasChanged] = useState(false);
 
@@ -68,31 +67,6 @@ export default function Page() {
     return !stopChecking;
   };
 
-  for (let indexY = 0; indexY < tableSize; indexY++) {
-    const row: ReactElement<any, any>[] = [];
-    for (let indexX = 0; indexX < tableSize; indexX++) {
-      row.push(
-        <div key={indexY + indexX} className="bg-[#333649] w-full relative">
-          {userGame.current[indexY][indexX].name !== '' && (
-            <Sprite
-              spriteName={userGame.current[indexY][indexX].name as SpritesName}
-              spriteInitialPosition={userGame.current[indexY][indexX].position}
-              isPainted
-              onPositionChange={(value: number) => {
-                setUserGamePositions(value, indexY, indexX);
-              }}
-            />
-          )}
-        </div>
-      );
-    }
-    table.push(
-      <div key={indexY} className="flex h-full gap-x-1">
-        {row}
-      </div>
-    );
-  }
-
   return (
     <div className="pt-5 h-screen">
       <GameHeader />
@@ -103,20 +77,23 @@ export default function Page() {
             key={hasChanged.toString()}
             className="absolute top-0 left-0 w-full h-full p-1 flex flex-col gap-y-1"
           >
-            {table}
+            <GameTable
+              tableSize={tableSize}
+              currentGame={userGame}
+              onPositionChange={setUserGamePositions}
+            />
           </div>
         </div>
       </div>
 
       <div>
         <button
-          className="px-4 py-2 bg-slate-300"
+          className="px-4 py-2 bg-emerald-500 rounded-md"
           onClick={() => {
-            userGame.current[0][0].position = 0;
             setHasChanged(!hasChanged);
           }}
         >
-          Change
+          Refresh table
         </button>
       </div>
     </div>
