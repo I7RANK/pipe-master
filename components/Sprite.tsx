@@ -1,30 +1,32 @@
 import { useRef, useState, useEffect } from 'react';
-import { PIPE_SPRITES } from '@/constants/pipe-pieces';
 import { SpritesName } from '@/types/sprites';
 import { createCircularIterator } from '@/utils/circular-iterator';
 import '@/styles/sprite.css';
+import { getSpriteByName } from '@/utils/get-sprite';
 
 type SpriteProps = {
   readonly spriteName: SpritesName;
+  readonly spriteInitialPosition: number | null;
   readonly isPainted: boolean;
   readonly onPositionChange: Function;
 };
 
 export default function Sprite({
   spriteName,
+  spriteInitialPosition,
   isPainted,
   onPositionChange,
 }: SpriteProps) {
   const buttonRef = useRef<HTMLButtonElement | null>(null);
-  const { painted, unPainted } = PIPE_SPRITES;
-  const sprite = isPainted ? painted[spriteName] : unPainted[spriteName];
+  const sprite = getSpriteByName(spriteName, isPainted);
   const [currentRotation, setCurrentRotation] = useState(0);
   const getPositionIndex = useRef<Function>(() => {});
   useEffect(() => {
-    const initialIndex = setRandomPosition(sprite.stepsQuantity);
+    const initialPosition = spriteInitialPosition ?? 0;
+    setPosition(initialPosition);
     getPositionIndex.current = createCircularIterator(
       sprite.stepsQuantity,
-      initialIndex
+      initialPosition
     );
     getPositionIndex.current();
   }, []);
@@ -37,15 +39,12 @@ export default function Sprite({
     setCurrentRotation(rotateTo);
     console.log(position, buttonRef.current.style.transform);
   };
-  const setRandomPosition = (maxPositions: number) => {
+  const setPosition = (position: number) => {
     if (!buttonRef.current) return;
-    const randomNumber = Math.floor(Math.random() * maxPositions);
-    const rotation = randomNumber * 90;
+    const rotation = position * 90;
     buttonRef.current.style.transform = `rotate(${rotation}deg)`;
     buttonRef.current.classList.add('fade-in');
     setCurrentRotation(rotation);
-    onPositionChange(randomNumber);
-    return randomNumber;
   };
 
   return (

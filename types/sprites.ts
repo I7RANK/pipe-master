@@ -1,4 +1,4 @@
-type Sprite = {
+export type Sprite = {
   imgUrl: string;
   stepsQuantity: number;
 };
